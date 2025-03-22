@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 public class Exercises {
 
     /*
@@ -9,8 +11,14 @@ public class Exercises {
         note: you should return the indices in ascending order and every array's solution is unique
     */
     public int[] productIndices(int[] values, int target) {
-        // todo
-        return null;
+        for(int i=0;i<values.length;i++) {
+            for(int j=i+1;j<values.length;j++) {
+                if(values[i]*values[j] == target) {
+                    return new int[] {i,j};
+                }
+            }
+        }
+        return new int[] {-1,-1};
     }
 
     /*
@@ -25,8 +33,36 @@ public class Exercises {
         so you should walk in that matrix in a curl and then add the numbers in order you've seen them in a 1D array
     */
     public int[] spiralTraversal(int[][] values, int rows, int cols) {
-        // todo
-        return null;
+        List<Integer> result = new ArrayList<>();
+        int top = 0, bottom = rows - 1, left = 0, right = cols - 1;
+
+        while (top <= bottom && left <= right) {
+            // Move right
+            for (int i = left; i <= right; i++) result.add(values[top][i]);
+            top++;
+
+            // Move down
+            for (int i = top; i <= bottom; i++) result.add(values[i][right]);
+            right--;
+
+            // Move left (if still in bounds)
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) result.add(values[bottom][i]);
+                bottom--;
+            }
+
+            // Move up (if still in bounds)
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) result.add(values[i][left]);
+                left++;
+            }
+        }
+        int[] arrayResult = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            arrayResult[i] = result.get(i);
+        }
+
+        return arrayResult;
     }
 
     /*
@@ -54,8 +90,24 @@ public class Exercises {
         if you're familiar with lists and arraylists, you can also edit method's body to use them instead of array
     */
     public int[][] intPartitions(int n) {
-        // todo
-        return null;
+        List<List<Integer>> result = new ArrayList<>();
+        partitionHelper(n, new ArrayList<>(), result, n);
+
+        // Convert list to 2D array
+        return result.stream().map(l -> l.stream().mapToInt(i -> i).toArray()).toArray(int[][]::new);
+    }
+
+    private void partitionHelper(int n, List<Integer> current, List<List<Integer>> result, int max) {
+        if (n == 0) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        for (int i = Math.min(n, max); i >= 1; i--) {
+            current.add(i);
+            partitionHelper(n - i, current, result, i);
+            current.remove(current.size() - 1);
+        }
     }
 
     public static void main(String[] args) {
